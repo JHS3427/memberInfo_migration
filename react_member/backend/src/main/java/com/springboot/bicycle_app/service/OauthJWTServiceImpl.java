@@ -36,7 +36,7 @@ public class OauthJWTServiceImpl implements OauthJWTService {
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
         this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000; // 초 -> 밀리초 변환
+        this.tokenValidityInMilliseconds = tokenValidityInSeconds; // 1시간
     }
 
     @PostConstruct
@@ -86,6 +86,23 @@ public class OauthJWTServiceImpl implements OauthJWTService {
         // 만료 시간 설정
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
+
+        // JWT 토큰 생성
+        return Jwts.builder()
+                .setSubject(username)                // 사용자 ID를 Subject로 설정
+                //claim의 경우, config파일에서 설정하는 허가 경로에 따라 통과/정지가 결정됨
+                //근데 지금은 permitall()로 해둬서 의미없음.
+                .claim("auth", authorities)          // 권한 정보를 Claims에 설정
+                .signWith(key, SignatureAlgorithm.HS512) // 암호화 알고리즘과 Key 설정
+                .setExpiration(validity)             // 만료 시간 설정
+                .compact();
+    }
+
+    @Override
+    public String createRefreshToken(String username, String authorities) {
+        // 만료 시간 설정
+        long now = (new Date()).getTime();
+        Date validity = new Date(now + this.tokenValidityInMilliseconds*1000);
 
         // JWT 토큰 생성
         return Jwts.builder()

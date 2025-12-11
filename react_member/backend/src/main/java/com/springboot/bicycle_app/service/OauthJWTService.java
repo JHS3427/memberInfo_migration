@@ -7,6 +7,7 @@ public interface OauthJWTService {
     void init();
     String createToken(Authentication authentication);
     String createToken(String username, String authorities);
+    String createRefreshToken(String username, String authorities);
     Claims getClaims(String token);
     Authentication getAuthentication(String token);
     boolean validateToken(String token);

@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,7 +50,7 @@ public class OauthController {
     }
 
     @PostMapping("/token")
-    public UserInfoDto gettoken(@RequestBody Token token){
+    public ResponseEntity<?> gettoken(@RequestBody Token token){
         String authcode;
         String socialId;
         if(token.getSocial().equals("google"))//구글은 중간 토큰 요청없이 access토큰을 바로 넘겨준다.
@@ -63,10 +65,11 @@ public class OauthController {
         }
         UserInfoDto socialIdChecker = new UserInfoDto();
         socialIdChecker.setUid(socialId);
-        String jwToken = oauthJWTService.createToken(socialId,"Role_USSR");
+        String jwToken = oauthJWTService.createToken(socialId,"ROLE_USER");
+        String jwRefreshToken = oauthJWTService.createRefreshToken(socialId,"ROLE_USER");
         socialIdChecker.setJwToken(jwToken);
 
-        boolean Social_reuslt_b = idDuplCheck(socialIdChecker);//false면 겹치는거 없음. true면 겹치는거 있음
+        boolean Social_reuslt_b = idDuplCheck(socialIdChecker);
         String Social_reuslt_s;
         if(Social_reuslt_b){
             Social_reuslt_s = "duplicate on " + token.getSocial();
@@ -77,7 +80,45 @@ public class OauthController {
             socialIdChecker.setUid("");
             socialIdChecker.setSocialDupl(false);
         }
-        return socialIdChecker;
+
+        //4. HttpOnly 쿠키 전송 객체 생성
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", jwRefreshToken)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(60 * 60 * 24 * 14)
+                .sameSite("Strict") //📌 SameSite=Strict 는 cross-site 요청에서 쿠키 전송 ❌, None or Lax 변경
+                //.secure(false)  //📌로컬 개발이라 http, https 아님, 배포 시 true
+                .build();
+
+
+        //5. ResponseBody로 결과 전송 : access 토큰 포함 객체 생성
+        Map<String, Object> body = Map.of(
+                "accessToken", jwToken,
+                "tokenType", "Bearer",
+                "login", socialIdChecker.isSocialDupl(),
+                "userId", socialIdChecker.getUid(),
+                "role", "ROLE_USER"
+        );
+
+        //6. 결과 전송
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body(body);
+//        socialIdChecker.setJwToken(jwToken);
+//
+//        boolean Social_reuslt_b = idDuplCheck(socialIdChecker);//false면 겹치는거 없음. true면 겹치는거 있음
+//        String Social_reuslt_s;
+//        if(Social_reuslt_b){
+//            Social_reuslt_s = "duplicate on " + token.getSocial();
+//            socialIdChecker.setSocialDupl(true);
+//        }
+//        else{
+//            Social_reuslt_s = "duplicate off" + token.getSocial();
+//            socialIdChecker.setUid("");
+//            socialIdChecker.setSocialDupl(false);
+//        }
+//        return socialIdChecker;
     }
 
     @PostMapping("/idDuplCheck")
@@ -240,7 +281,7 @@ public class OauthController {
                 authentication.getPrincipal();
 
         return ResponseEntity.ok(Map.of(
-                "isLogin", true,
+                "isLogin", Boolean.TRUE,
                 "uid", principal.getUsername(),
                 "role", principal.getAuthorities()
         ));

@@ -2,6 +2,7 @@ package com.springboot.bicycle_app.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.csrf.*;
 import org.springframework.util.StringUtils;
@@ -34,14 +36,17 @@ import java.util.function.Supplier;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
+    private final JwtRequestFilter jwtRequestFilter;
 
-    @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+//
+//    @Autowired
+//    public SecurityConfig(UserDetailsService userDetailsService) {
+//        this.userDetailsService = userDetailsService;
+//    }
 
 
     @Bean
@@ -74,6 +79,7 @@ public class SecurityConfig {
             .formLogin(form -> form.disable())
             .requestCache(rc -> rc.disable()) //로그인 후 리다이렉트 방지
             //                .securityContext(sc -> sc.requireExplicitSave(true)) //인증정보 세션 자동저장 방지
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.POST, "/rental/payment", "/kakaopay/ready").permitAll()
                 // 공개 API (읽기 전용)

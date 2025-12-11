@@ -1,0 +1,67 @@
+"use client"
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { axiosPost} from "@/utils/dataFetch";
+import {useAuthStore} from "@/store/authStore";
+import {refreshCsrfToken} from "@/utils/csrf/manageCsrfToken";
+import Swal from "sweetalert2";
+// import { useDispatch } from 'react-redux';
+// import { useNavigate } from "react-router-dom";
+
+export default function Auth(){
+
+    const router = useRouter();
+    const login = useAuthStore((s)=>s.login);
+
+
+    useEffect(()=>{
+        //window, sessionStorage는 브라우저 함수라서
+        // 클라이언트 컴포넌트가 로딩이 다 된 시점(useEffect 시작 시점) 이후에 불러야한다.
+        let code = new URL(window.location.href).searchParams.get("code");
+        const social = sessionStorage.getItem('social');
+        if(code != null)//카카오나 네이버는 이거로 코드 수집 가능
+        {
+            console.log("authcode:123 ",code);
+        }
+        else{//이건 구글
+            code = window.location.hash;
+            code = code.substring(code.indexOf('=')+1,code.indexOf('&'))
+            console.log("authcode:123123123 ",code);
+        }
+        console.log("authcode: ",code);
+        const handleSocialtoken = async () =>{
+            // const authtoken = await getsocialtoken(code,social);
+
+            const hostName = new URL(window.location.href).hostname;
+            const json_code = {"authCode": code,"social":social, "hostName" : hostName};
+            const url = "/auth/token";
+
+            const authtoken = await axiosPost(url,json_code);//authtoken이 dto객체 받음.
+            console.log("authtoken : ", authtoken );
+            // return authtoken;
+            if(authtoken?.login)
+            {
+                login({
+                    userId: authtoken.userId,
+                    role: authtoken.role,
+                    accessToken: authtoken.accessToken});
+                await refreshCsrfToken();
+
+                const loginInfo = { "userId": authtoken.userId,
+                                        "isLogin":authtoken.login,
+                                        "isSocial" :social,
+                                        "role": role || []};
+                localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
+                alert("로그인에 성공하셨습니다.");
+                // router.push("/");
+            }
+            else {
+                await Swal.fire({icon: 'error',text :"소셜로그인 실패. 재시도 부탁드립니다."})
+            }
+        };
+        handleSocialtoken();
+    },[])
+
+    return(<></>);
+}
