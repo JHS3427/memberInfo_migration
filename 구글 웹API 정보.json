@@ -1,0 +1,11 @@
+{"web":
+	{"client_id":"308480962204-8kq5mtbgf2o8fk1stqa7tdv72kmrm5rq.apps.googleusercontent.com",
+	"project_id":"academy-team-project-bicycle",
+	"auth_uri":"https://accounts.google.com/o/oauth2/auth",
+	"token_uri":"https://oauth2.googleapis.com/token",
+	"auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+	"client_secret":"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",
+	"redirect_uris":["http://localhost:3000/auth"]}}
+
+구글 로그인 정보 출처 : 
+https://velog.io/@39busy/React-Social-Login

@@ -1,0 +1,14 @@
+로그인 페이지 구성
+
+useEffect>state값(소셜 로그인)이 있으면 자동로그인 아니면 다음 - 여기가 문제
+auth쪽도 건드려야 할둣.
+
+소셜로그인용 API키 네이버키 구글키 선언+소셜 요청 URL 선언
+
+일반 로그인용 변수 선언 및 함수선언
+
+리턴
+	> 입력시 handleformchange > formdata변경, errors 초기화
+	> 제출시 handleLoginSubmit > param선언 > getLogin시도>결과따라 출력 및 변수저장
+
+백엔드에서 소셜 로그인의 경우 토큰 발급은 받았음(근데 리프레시는 안만든듯)
