@@ -1,0 +1,168 @@
+/* ------------------------------------------- */
+/* 1. 전체 레이아웃 컨테이너 (.loginCenter) */
+/* ------------------------------------------- */
+.loginCenter {
+    /* 화면 정중앙에 배치 (Flexbox 사용) */
+    display: flex;
+    justify-content: center; /* 가로 중앙 */
+    align-items: center; /* 세로 중앙 */
+    flex-direction: column;
+
+
+    /* 화면 전체 높이를 차지해야 세로 중앙 정렬이 작동합니다. */
+    /* height: 100vh; */
+
+    /* 텍스트 크기 지정 */
+    font-size: 30px;
+
+    /* 시각적 확인을 위한 스타일 */
+    min-height: 50vh; /* 최소 높이를 뷰포트 높이로 설정 */
+}
+
+/* ------------------------------------------- */
+/* 2. 로그인 전체 박스 (.loginAllBox) */
+/* ------------------------------------------- */
+.loginAllBox {
+    /* 내부 요소를 세로로 쌓이게 하면서, 동시에 중앙 정렬 가능하게 합니다. */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 내부 요소들을 가로 중앙에 배치 */
+
+    margin: 5vh;
+    width: 800px;
+    padding: 30px;
+    background-color: #f7f7f7;
+    border-radius: 12px;
+}
+
+/* ------------------------------------------- */
+/* 3. 로그인 폼과 데이터 박스 스타일 */
+/* ------------------------------------------- */
+
+/* 제목 중앙 정렬 */
+.LoginPage, .OuterLoginPage {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+    color: #333;
+}
+.OuterLoginPage{
+    margin-top: 50px;
+}
+
+/* 폼과 ul에 기본 스타일 제거 */
+.loginAllBox > ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%; /* 폼 안의 ul이 전체 너비를 사용하도록 설정 */
+}
+
+.loginAllBox li {
+    margin-bottom: 20px;
+}
+
+.loginDataBox {
+    /* 텍스트와 인풋이 포함된 컨테이너 */
+    display: flex; /* Flex를 사용하여 내부 정렬을 쉽게 합니다. */
+    align-items: center; /* 텍스트와 인풋을 수직 중앙 정렬합니다. */
+    justify-content: space-between; /* 텍스트와 인풋을 양 끝으로 분리 (선택 사항) */
+    width: 100%;
+}
+
+.loginDataBox input {
+    /* 인풋 박스 크기 및 정렬 */
+    width: 80%; /* 인풋이 차지할 비율 (Flex 환경에서는 float 대신 비율 사용) */
+    padding: 10px;
+    font-size: 24px; /* 글자 크기 유지 */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+
+    /* 💡 수정 사항: 텍스트와의 수직 정렬 문제를 해결합니다. */
+    /* Flexbox를 사용했기 때문에 이 속성이 필요 없지만,
+       혹시 다른 곳에서 문제가 발생할 경우를 대비해 알고 계시면 좋습니다. */
+    /* vertical-align: middle; */
+}
+
+/* ------------------------------------------- */
+/* 4. 버튼 영역 스타일 */
+/* ------------------------------------------- */
+.loginAllBox form ul { /* 로그인 및 비우기 버튼을 담는 ul */
+    display: flex;
+    justify-content: center; /* 버튼들을 가로 중앙에 모읍니다. */
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.loginAllBox form ul li {
+    margin: 0 10px;
+}
+
+.loginAllBox button { /*signup에서 아무런 허가없이 가져다 써서 앞에 .loginAllBox 붙여둠*/
+    font-size: 30px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--color-black);
+    /* background-color: #007bff; */
+    color: white;
+    transition: background-color 1s;
+}
+
+.loginAllBox button:hover {
+    background: var(--color-blue);
+}
+
+/* 외부 로그인 버튼 */
+.socialButtonWrapper {
+    display: flex;
+    flex-direction: row; /* 버튼 3개를 가로로 나열 */
+    justify-content: center; /* 버튼 3개를 중앙에 배치 */
+    width: 100%;
+}
+
+#kakao, #naver,#google  { /* ⭐ #google 선택자 추가 */
+    transition: background-color 1s, color 1.5s;
+    margin: 0 10px; /* ⭐ 모든 버튼에 좌우 마진을 균일하게 적용 */
+    padding: 10px 15px; /* 패딩 조정 */
+    font-size: 28px; /* 글꼴 크기 조정 */
+}
+#kakao{
+    color: #3c1e1e;
+    background-color: #fddc3f;
+}
+#naver{
+    color: #3c1e1e;
+    background-color: #6fff00;
+}
+#google{
+    color : white;
+    background-color: #1e00ff;
+}
+#kakao:hover, #naver:hover, #google:hover{
+    background: var(--color-blue);
+    color : white;
+}
+.loginBottomLinks {
+    /* 중앙에 배치하기 위해 컨테이너의 너비를 800px 박스와 맞추거나,
+       전체 너비에서 중앙 정렬합니다. */
+    width: 800px; /* loginAllBox와 동일한 너비를 사용하거나 100% 사용 */
+    margin: 20px auto 0; /* 중앙 정렬 및 위쪽 마진 추가 */
+
+    display: flex;
+    justify-content: center; /* 링크들을 가로 중앙에 배치 */
+    padding: 15px 0;
+}
+
+.loginLinkBtn {
+    /* 기존 스타일 유지 */
+    text-decoration: none;
+    color: #007bff;
+    font-size: 20px;
+    padding: 5px 15px;
+    margin: 0 10px;
+    border-right: 1px solid #ccc;
+}
+

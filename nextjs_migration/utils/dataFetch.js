@@ -44,7 +44,7 @@ api.interceptors.response.use(
         if (err.response?.status === 401 && !original._retry) { //왼쪽 값이 null 또는 undefined 인 경우 → 오류를 던지지 않고 undefined 를 반환
             original._retry = true;
             try {
-                const { data } = await api.post( "http://localhost:9000/auth/refresh",
+                const { data } = await api.post( "/auth/refresh",
                     {},
                     { headers: { "Content-Type": "application/json" }
                     });
@@ -89,6 +89,7 @@ export const groupByRows = (array, number) => {
 export const axiosGet = async (url) => {
     try{
         const reqUrl = `http://localhost:9000${url}`;
+        // const reqUrl = `${url}`;
         const response = await api.get(reqUrl);
         return response?.data;
     }catch(error) {
@@ -102,11 +103,19 @@ export const axiosGet = async (url) => {
 export const axiosPost = async (url, data) => {
     try{
         const reqUrl = `http://localhost:9000${url}`;
+        const csrfToken = getCsrfTokenFromCookie();//보낼때 헤더에 토큰 넣어서 보내기.
+        const headers = { "Content-Type": "application/json"}
+        if(csrfToken){
+            headers['X-XSRF-TOKEN'] = csrfToken; // 👈 XSRF 헤더 추가
+        } else {
+            console.log("CSRF 토큰이 없어 403 에러가 발생할 수 있습니다.");
+        }
+
         console.log("reqURL :: ", reqUrl, data);
         const response = await api.post( reqUrl, data,
-                                                     { headers: { "Content-Type": "application/json"} });
+            { headers: headers } // 수정된 헤더 사용
+        );
         return response.data;
-
     }catch(error) {
        console.log("🎯 에러발생, 페이지 이동합니다!!", error);
     }
@@ -129,3 +138,18 @@ export const fetchData = async (url) => {
     return jsonData;
 }
 
+const getCsrfTokenFromCookie = () => {
+    const name = "XSRF-TOKEN=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+};

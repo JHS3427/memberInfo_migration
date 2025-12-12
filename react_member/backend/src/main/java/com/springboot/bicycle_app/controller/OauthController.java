@@ -71,7 +71,7 @@ public class OauthController {
 
         boolean Social_reuslt_b = idDuplCheck(socialIdChecker);
         String Social_reuslt_s;
-        if(Social_reuslt_b){
+        if(Social_reuslt_b){//true면 아이디 등록됨. false면 아이디 없음
             Social_reuslt_s = "duplicate on " + token.getSocial();
             socialIdChecker.setSocialDupl(true);
         }
@@ -165,7 +165,7 @@ public class OauthController {
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
         try {
-            System.out.println("인증 성공1 ");
+            System.out.println("login 1 step ");
 
             if(userInfo.isSocialDupl())
             {

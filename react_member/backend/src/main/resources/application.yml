@@ -2,6 +2,8 @@
 server:
   tomcat:
     uri-encoding: UTF-8
+  port: 9000
+
 
 kakaopay:
   pay:

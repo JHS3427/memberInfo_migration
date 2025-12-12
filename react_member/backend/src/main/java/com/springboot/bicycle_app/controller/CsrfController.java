@@ -13,6 +13,7 @@ public class CsrfController {
     @GetMapping("/create")
     public ResponseEntity<?> create(HttpServletRequest request){
         /* CSRF 토큰을 생성하여 쿠키에 실어서 보냄 - 쿠키는 Response~~ 응답객체에 자동 실림*/
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         CsrfToken token = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
         return ResponseEntity.ok(token);
     }

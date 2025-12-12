@@ -1,3 +1,4 @@
+"use client"
 /**
  csrf 토큰 요청시 주의사항
  - 쿠키 요청을 항상 true로 설정
@@ -11,7 +12,7 @@ import axios from './axiosSetup.js';
  */
 export const refreshCsrfToken = async() => {
     try{
-        await axios.get("/csrf/refresh");
+        await axios.get("http://localhost:9000/csrf/refresh");
         console.log("---------------->> 토큰 최초 재발급 !!!")
     } catch(error) {
         console.log("csrf token create error :: ", error);
@@ -24,9 +25,12 @@ export const refreshCsrfToken = async() => {
  */
 export const createCsrfToken = async() => {
     try{
-        await axios.get("/csrf/create");
+        await axios.get("http://localhost:9000/csrf/create", {
+            withCredentials: true // ✅ 1. 쿠키 전송 허용
+        });
         console.log("---------------->> 토큰 최초 발급 !!!")
     } catch(error) {
         console.log("csrf token create error :: ", error);
     }
 }
+

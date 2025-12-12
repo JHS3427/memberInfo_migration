@@ -1,0 +1,78 @@
+"use client"
+
+import Swal from 'sweetalert2';
+import {useRouter} from "next/navigation";
+import {useRef, useState} from "react";
+import { getLogin } from "@/utils/authAPI";
+import {useAuthStore} from "@/store/authStore";
+
+export function Loginform(){
+
+    //소셜로그인이 아닌 일반 로그인을 위한 값 세팅.
+    const initialsetting = {uid:"",upass : ""};//이쪽은 param이 null이 아니라 socialDupl 넣을 필요 없다
+    const [formData,setFormData] = useState(initialsetting);
+    const [errors,setErrors] = useState(initialsetting);
+    const idRef = useRef(null);
+    const pwdRef = useRef(null);
+    const router = useRouter();
+    const logdate = useAuthStore((s)=>s.login);
+    //로그인 페이지에 직접 입력하는 경우 칸에 값이 입력됨에 따라 변화함을 감지
+    const handleformchange=(e)=>{
+        const{name,value} = e.target;
+        setFormData({...formData,[name]:value});
+        setErrors(initialsetting)
+    }
+
+    //제출버튼을 누르면 변화 발생.
+    const handleLoginSubmit = async (e) => {
+        e.preventDefault();
+        const param = {
+            idRef : idRef,
+            pwdRef : pwdRef,
+            setErrors : setErrors,
+            errors : errors
+        }
+        const succ = await getLogin(formData,param);
+        console.log(succ)
+        logdate({
+            userId: succ.userId,
+            role: succ.role,
+            accessToken: succ.accessToken});
+        if(succ.login)//여기다가 localstorage에 데이터 저장
+        {
+            // await login(); -- 기종씨가 입력하신 함수
+            // navigate('/');
+            router.push("/");
+        }
+        else{
+            await Swal.fire({icon: 'error',text : "로그인에 실패. 확인후 다시 진행해주세요."});
+            setFormData({uid:"", upass:""});
+            idRef.current.focus();
+        }
+    }
+
+    return(
+        <form onSubmit={handleLoginSubmit}>
+            <li>
+                <div className='loginDataBox'>아이디 : <input type="text"
+                                                           name="uid"
+                                                           onChange={handleformchange}
+                                                           ref = {idRef}
+                                                           placeholder='아이디'/>
+                </div>
+            </li>
+            <li>
+                <div className='loginDataBox'>비밀번호 : <input type="password"
+                                                            name="upass"
+                                                            onChange={handleformchange}
+                                                            ref= {pwdRef}
+                                                            placeholder='비밀번호'/>
+                </div>
+            </li>
+            <ul>
+                <li><button type = "submit">로그인</button></li>
+                <li><button type = "reset">비우기</button></li>
+            </ul>
+        </form>
+    )
+}

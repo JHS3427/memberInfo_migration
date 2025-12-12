@@ -1,11 +1,14 @@
 import { validateFormCheck,  validateSignupFormCheck } from '@/utils/validate.js';
 import {axiosPost} from "@/utils/dataFetch";
+import {refreshCsrfToken} from "@/utils/csrf/manageCsrfToken";
 
 /** Login */
 export const getLogin = async(formData, param) => {
     if(validateFormCheck(param)) {
         const url = "/auth/login";
         const result = await axiosPost(url, formData);
+        await refreshCsrfToken();
+        console.log(result);
         return result;
     }
     return false;
