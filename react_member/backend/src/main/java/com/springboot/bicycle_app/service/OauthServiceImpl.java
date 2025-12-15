@@ -238,6 +238,7 @@ public class OauthServiceImpl implements OauthService{
 
     @Override
     public int signUp(UserInfoDto UserInfoDto){
+        System.out.println("signup service");
         int result = 0;
         String encodePwd = passwordEncoder.encode(UserInfoDto.getUpass());//UUID타입으로 생성됨
         UserInfoDto.setUpass(encodePwd);

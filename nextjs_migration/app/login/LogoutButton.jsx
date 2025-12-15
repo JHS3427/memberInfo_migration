@@ -4,10 +4,14 @@ import Link from "next/link";
 import Swal from "sweetalert2";
 import {useAuthStore} from "@/store/authStore";
 import {refreshCsrfToken} from "@/utils/csrf/manageCsrfToken";
+import {getLogout} from "@/utils/authAPI";
+import {useRouter} from "next/navigation";
 
 export function LogoutButton(){
 
 
+    const router = useRouter();
+    const logout = useAuthStore((s) => s.logout);
     const userId = useAuthStore((s) => s.userId);
     const isLogin = useAuthStore((s) => s.isLogin);
     console.log("userId :: >>" +userId)
@@ -18,13 +22,15 @@ export function LogoutButton(){
         else{
 
         }
-        // dispatch(getLogout());->
+        await getLogout();
+        await refreshCsrfToken();
         localStorage.removeItem("loginInfo");
         sessionStorage.removeItem("social");
-        await refreshCsrfToken();
         await Swal.fire({icon: 'info',text :"로그아웃 하셨습니다."});
         // await logout(); -- 기종씨가 입력하신 함수
         // navigate('/');
+        router.push("/");
+        logout({});
     }
 
     return(

@@ -36,27 +36,33 @@ export function SocialAuth(){
             const url = "/auth/token";
 
             const authtoken = await axiosPost(url,json_code);//authtoken이 dto객체 받음.
+            await refreshCsrfToken();
             console.log("authtoken : ", authtoken );
-            // return authtoken;
+            //
+
+            const loginInfo = { "userId": authtoken.accessToken,
+                "isLogin":authtoken.login,
+                "isSocial" :social,
+                "role": authtoken.role || []};
+            localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
+
             if(authtoken?.login)
             {
-                login({
+                login({//login에서는 isLogin값은 true로 변경
                     userId: authtoken.userId,
                     role: authtoken.role,
                     accessToken: authtoken.accessToken});
-                await refreshCsrfToken();
 
-                const loginInfo = { "userId": authtoken.userId,
-                    "isLogin":authtoken.login,
-                    "isSocial" :social,
-                    "role": authtoken.role || []};
-                localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
-                alert("로그인에 성공하셨습니다.");
-                router.push("/");
+
+                router.push("/login");//csrf토큰 새로고침을 위해서 재접속
+                // alert("로그인에 성공하셨습니다.");
+                // router.push("/");
             }
-            else {
+            else {// 회원가입
                 await Swal.fire({icon: 'error',text :"아이디 없음. 로그인 실패. 확인 부탁드립니다."})
-                router.push("/login");
+
+
+                router.push("/signUp");
             }
         };
         handleSocialtoken();

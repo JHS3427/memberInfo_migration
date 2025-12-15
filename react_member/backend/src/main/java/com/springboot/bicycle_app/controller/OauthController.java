@@ -130,6 +130,7 @@ public class OauthController {
     public int signup(@RequestBody UserInfoDto userInfoDto){
         if(userInfoDto.isSocialDupl())//true면 일반 회원가입
         {
+            System.out.println("signup controller");
             oauthService.signUp(userInfoDto);
             travelService.insertSave(userInfoDto.getUid());
             return 1;
@@ -263,6 +264,16 @@ public class OauthController {
         // xsrf.setDomain("localhost");  // 기존 쿠키가 domain=localhost였다면 지정
         response.addCookie(xsrf);
 
+        // 1. refreshToken 쿠키 삭제 (만료)
+        ResponseCookie deleteRefreshCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                //.sameSite("None")
+                //.secure(false)
+                .build();
+
+        response.addHeader("Set-Cookie", deleteRefreshCookie.toString());
 
         // 3. 응답: 세션이 있었든 없었든, 클라이언트에게 로그아웃 요청이 성공했음을 알림 (200 OK)
         //    JSESSIONID 쿠키 삭제는 session.invalidate() 시 서블릿 컨테이너가 처리합니다.

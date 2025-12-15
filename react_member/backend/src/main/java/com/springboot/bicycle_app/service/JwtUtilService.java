@@ -90,6 +90,9 @@ public class JwtUtilService {
         Claims claims = getClaims(token);
         String id = claims.getSubject();
         String role = claims.get("role", String.class);
+        if(role==null){//초기 미등록된 계정 고려
+            role = "USER";
+        }
         role = role.replace("[", "").replace("]", "").trim();
 
         UserDetails user = User.withUsername(id)

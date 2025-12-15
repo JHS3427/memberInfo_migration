@@ -1,6 +1,7 @@
 package com.springboot.bicycle_app.service;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +38,16 @@ public class OauthJWTServiceImpl implements OauthJWTService {
             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
         this.secret = secret;
         this.tokenValidityInMilliseconds = tokenValidityInSeconds; // 1시간
+
     }
 
     @PostConstruct
     @Override
     public void init() {
         // 주입받은 시크릿 키 문자열을 Base64 인코딩하여 Key 객체로 변환
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+//        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     // --- 2. 토큰 생성 (Authentication 객체 사용) ---

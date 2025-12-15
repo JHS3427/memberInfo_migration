@@ -12,6 +12,7 @@
 import {Loginform} from "@/app/login/Loginform";
 import {SocialLogin} from "@/app/login/SocialLogin";
 import {LogoutButton} from "@/app/login/LogoutButton";
+import Link from "next/link";
 
 import './loginpage.css'
 export default function Login() {
@@ -26,15 +27,15 @@ export default function Login() {
                     <SocialLogin/>
                     <LogoutButton/>
                 </div>
-                {/*<div className='loginBottomLinks'>*/}
-                {/*    <Link href="/signUp" className='loginLinkBtn'>회원가입</Link>*/}
-                {/*    <Link href="/IdPwSearch"*/}
-                {/*          className='loginLinkBtn'*/}
-                {/*          state={{ type: 'findId' }}>아이디 찾기</Link>*/}
-                {/*    <Link href="/IdPwSearch"*/}
-                {/*          className='loginLinkBtn'*/}
-                {/*          state={{ type: 'changePass'}}>비밀번호 찾기</Link>*/}
-                {/*</div>*/}
+                <div className='loginBottomLinks'>
+                    <Link href="/signUp" className='loginLinkBtn'>회원가입</Link>
+                    <Link href="/IdPwSearch"
+                          className='loginLinkBtn'
+                          state={{ type: 'findId' }}>아이디 찾기</Link>
+                    <Link href="/IdPwSearch"
+                          className='loginLinkBtn'
+                          state={{ type: 'changePass'}}>비밀번호 찾기</Link>
+                </div>
             </div>
         </>
     );

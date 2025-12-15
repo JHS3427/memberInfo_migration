@@ -1,15 +1,40 @@
 import { validateFormCheck,  validateSignupFormCheck } from '@/utils/validate.js';
 import {axiosPost} from "@/utils/dataFetch";
 import {refreshCsrfToken} from "@/utils/csrf/manageCsrfToken";
+import { useDaumPostcodePopup } from 'react-daum-postcode'; // 주소 찾기 관련 import
 
 /** Login */
 export const getLogin = async(formData, param) => {
-    if(validateFormCheck(param)) {
+
+    if(param==null)//소셜로그인을 이용한 자동 로그인인 경우
+    {
         const url = "/auth/login";
-        const result = await axiosPost(url, formData);
-        await refreshCsrfToken();
-        console.log(result);
-        return result;
+        console.log("formData : >> :",formData);
+        const result = await axiosPost(url,formData); //axios라 await 안걸면 promise pending이 뜰 수 있다.
+        if(result.login)//소셜로그인 성공 + DB에 저장된 아이디
+        {
+            //"로그인 성공"
+            // dispatch(login({"userId":result.userId,"isSocial":true,"role":result.role}));
+
+            await refreshCsrfToken()
+            console.log(result);
+
+            localStorage.setItem("loginInfo",JSON.stringify(result))
+
+            return true;
+        }
+        else{
+
+        }
+    }
+    else{
+        if(validateFormCheck(param)) {
+            const url = "/auth/login";
+            const result = await axiosPost(url, formData);
+            await refreshCsrfToken();
+            console.log(result);
+            return result;
+        }
     }
     return false;
 }
@@ -62,4 +87,82 @@ export const randomString8to16 = () =>{
     }
 
     return result;
+}
+
+//SignUp.jsx 사용
+//현재 회원가입 페이지에서 사용중. 이후 개인정보 페이지의 수정항목에 재차 사용 예정
+/* 주소찾기 관련 코드 모음  ---------------------------------------------> */
+export const usePostCode= (formData,setFormData)=>{
+    const postcodeScriptUrl = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    const open = useDaumPostcodePopup(postcodeScriptUrl);
+
+    const handleComplete = (data) => {
+        let fullAddress = data.address;
+        let placezonecode = data.zonecode;
+        let extraAddress = '';
+        let localAddress = data.sido + ' ' + data.sigungu;
+
+        if (data.addressType === 'R') {
+            if (data.bname !== '') {
+                extraAddress += data.bname;
+            }
+            if (data.buildingName !== '') {
+                extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName);
+            }
+            // fullAddress = fullAddress.replace(localAddress, '');
+            fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
+        }
+
+        setFormData({...formData,  mainAddress : fullAddress, postcode: placezonecode})
+    };
+    const handleClick = () => {
+        open({ onComplete: handleComplete });
+    };
+
+    return {handleClick}
+}
+
+
+//SignUp.jsx 사용
+export const idDuplCheck = async(incomeId) => {
+    const url = "/auth/idDuplCheck";
+    const json_id = {"uid":incomeId}
+    const dupleTorF = await axiosPost(url,json_id)
+    return dupleTorF;
+}
+
+//SignUp.jsx 사용
+export const sendSignUpData = async(formData) =>
+{
+    console.log(formData)
+    let emailAddress_full = "";
+    if(formData.emailList==="default"){
+        emailAddress_full = formData.emailAddress;
+    }
+    else{
+        emailAddress_full = formData.emailAddress + "@" + formData.emailList;
+    }
+    const signUpData = {
+        uid : formData.id,
+        upass : formData.pass,
+        uname : formData.name,
+        uage : formData.age,
+        ugender : formData.gender,
+        uaddress : formData.mainAddress+ " " +formData.detailAddress,
+        postcode : formData.postcode,
+        uemail : emailAddress_full,
+        uphone : formData.phone,
+        jwToken : formData.jwToken,
+        socialDupl : formData.socialDupl
+    }
+
+    const url = "/auth/signup";
+    console.log("signUpData:>>>>>",signUpData);
+    if(signUpData.socialDupl) {
+        console.log("signUpData.socialDupl:>>>>>true");
+    }
+    else{
+        console.log("signUpData.socialDupl:>>>>>false");
+    }
+    const signUpResult = await axiosPost(url,signUpData)
 }

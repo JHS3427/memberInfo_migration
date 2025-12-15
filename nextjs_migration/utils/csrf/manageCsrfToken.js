@@ -12,7 +12,9 @@ import axios from './axiosSetup.js';
  */
 export const refreshCsrfToken = async() => {
     try{
-        await axios.get("http://localhost:9000/csrf/refresh");
+        await axios.get("http://localhost:9000/csrf/refresh", {
+            withCredentials: true // ✅ 1. 쿠키 전송 허용
+        });
         console.log("---------------->> 토큰 최초 재발급 !!!")
     } catch(error) {
         console.log("csrf token create error :: ", error);
@@ -33,4 +35,3 @@ export const createCsrfToken = async() => {
         console.log("csrf token create error :: ", error);
     }
 }
-

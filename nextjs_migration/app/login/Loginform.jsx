@@ -2,7 +2,7 @@
 
 import Swal from 'sweetalert2';
 import {useRouter} from "next/navigation";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import { getLogin } from "@/utils/authAPI";
 import {useAuthStore} from "@/store/authStore";
 
@@ -16,12 +16,45 @@ export function Loginform(){
     const pwdRef = useRef(null);
     const router = useRouter();
     const logdate = useAuthStore((s)=>s.login);
+    const socialisLogin = useAuthStore((s)=>s.isLogin);
+    const isLoginAccessToken = useAuthStore((s)=>s.accessToken);
     //로그인 페이지에 직접 입력하는 경우 칸에 값이 입력됨에 따라 변화함을 감지
     const handleformchange=(e)=>{
         const{name,value} = e.target;
         setFormData({...formData,[name]:value});
         setErrors(initialsetting)
     }
+
+    // useEffect로 if문 걸고, isLogin값이 true면 발동시키고 아니면 패스
+    // csrf 토큰 재발급하려면 세션이 한번 바뀌어야해서 그냥 로그인 한번 시킴
+    useEffect(() => {
+        if(socialisLogin && sessionStorage.getItem("social"))
+        {
+            const param = null;
+            const usersocialid = localStorage.getItem("loginInfo");
+            const loginInfoObject = JSON.parse(usersocialid);
+
+            const autoFormData = {uid : loginInfoObject["userId"] , socialDupl: true}
+
+            const attemptAutoLogin = async () => {
+                console.log("attemptAutoLogin123123123");
+                // const success = await dispatch(getLogin(autoFormData, param));
+                const success = await getLogin(autoFormData,param);
+                if (success) {
+                    console.log("lego");
+                    // router.push("/"); 다 완료하고 넣기.
+                }
+                else {
+                    console.log("attemptfail");
+                    Swal.fire({icon: 'error',text :"소셜로그인 실패. 재시도 부탁드립니다."})
+                    // navigate('/login');
+                }
+            }
+            attemptAutoLogin();
+        }
+    }, []);
+
+
 
     //제출버튼을 누르면 변화 발생.
     const handleLoginSubmit = async (e) => {
@@ -42,6 +75,7 @@ export function Loginform(){
         {
             // await login(); -- 기종씨가 입력하신 함수
             // navigate('/');
+            localStorage.setItem("loginInfo",JSON.stringify(succ));
             router.push("/");
         }
         else{
