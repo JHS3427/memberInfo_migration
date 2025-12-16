@@ -82,6 +82,13 @@ public class SecurityConfig {
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.POST, "/rental/payment", "/kakaopay/ready").permitAll()
+                // 보호된 게시판 API (로그인 필요)
+                .requestMatchers(
+                        "/auth/info",
+                        "/api/board/write",
+                        "/api/board/update/**",
+                        "/api/board/delete/**"
+                ).authenticated()
                 // 공개 API (읽기 전용)
                 .requestMatchers(
                     "/member/**", "/products/**", "/auth/**", "/cart/**",
@@ -98,13 +105,6 @@ public class SecurityConfig {
                     "/api/board/review",
                     "/api/board/detail/**"
                 ).permitAll()
-
-                // 보호된 게시판 API (로그인 필요)
-                .requestMatchers(
-                    "/api/board/write",
-                    "/api/board/update/**",
-                    "/api/board/delete/**"
-                ).authenticated()
 
                 // 그 외 요청
                 .anyRequest().permitAll()

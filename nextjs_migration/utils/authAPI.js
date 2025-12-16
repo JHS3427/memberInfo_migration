@@ -166,3 +166,68 @@ export const sendSignUpData = async(formData) =>
     }
     const signUpResult = await axiosPost(url,signUpData)
 }
+
+export const SearchingUserInfo = async(searchUserInfo) =>{
+    console.log("SearchingUserInfo : >>", searchUserInfo);
+    const url = "/auth/searchuserinfo";
+    const result = await axiosPost(url,searchUserInfo);
+
+    // return true;
+    return result;
+}
+
+export const sendingAuthCode = async(searchUserInfo)=>{
+    console.log("SearchingUserInfo : >>", searchUserInfo);
+    const url = "/auth/compareauthcode";
+    const result = await axiosPost(url,searchUserInfo);
+    console.log(result)
+    return result;
+}
+
+export const updateUser = async (newUserData) =>{
+
+    const url = "/auth/updateUser";
+    console.log(newUserData)
+    if(newUserData["uaddress_main"]!="" && newUserData["uaddress_main"]!=null)
+    {
+        newUserData["postcode"]=newUserData["uaddress_main"].split(" *** ")[1]
+        newUserData["uaddress_main"]=newUserData["uaddress_main"].split(" *** ")[0]
+        newUserData["uaddress"] = newUserData.uaddress_main + " " + newUserData.uaddress_sub;
+    }
+    console.log("update newUserData:>>>>>",newUserData);
+    for( const [key, value] of Object.entries(newUserData))
+    {
+        if(newUserData[key]==="")
+        {
+            newUserData[key]=null;
+        }
+    }
+    console.log("newUserDatanewUserDatanewUserDatanewUserData")
+
+    console.log(newUserData)
+    const signUpResult = await axiosPost(url,newUserData)
+    if(signUpResult){
+        console.log("newUserData.includedId >>>>",newUserData.uid)
+        const loginInfo = { "userId":newUserData.uid, "isLogin":true};
+        localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
+    }
+
+    return 1;//어차피 1 반환함
+}
+
+
+export const getInfo = async (JsonData) => {
+    const url = "/auth/info";
+    console.log("JsonData :  ", JsonData);
+    const result = await axiosPost(url,JsonData);
+    console.log("comingData :  ", result);
+    return result;
+}
+
+export const IdDrop = async(dropUserData)=>{
+    const url = "/auth/iddrop";
+    const idDropResult = await axiosPost(url,dropUserData)
+    console.log("ID delete end");
+
+    return null;
+}

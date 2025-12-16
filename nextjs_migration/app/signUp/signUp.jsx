@@ -11,6 +11,9 @@ import {SignUp_GenderSelect} from "@/app/signUp/SignUp/Gender/SignUp_GenderSelec
 import {SignUp_PostCodeBox} from "@/app/signUp/SignUp/Postcode/SignUp_PostCodeBox";
 import {SignUp_EmailSection} from "@/app/signUp/SignUp/Email/SignUp_EmailSection";
 
+import {PhoneNumberSetter} from "@/components/PhoneNumberSetter";
+import {WarningMessage} from "@/app/signUp/WarningMessage";
+
 export function SignUp(){
 
     //얘가 null이면 그냥 회원가입, null이 아니면 소셜 회원가입-localstorage쓸려면 useclient에 넣어야함
@@ -76,22 +79,7 @@ export function SignUp(){
         }
         else if(name ==="phone")
         {
-            // 1. 입력된 값에서 숫자만 추출
-            const onlyNumbers = value.replace(/[^0-9]/g, '');
-            let formattedValue = onlyNumbers;
-
-            // 2. 최대 11자리까지만 처리 (ex: 01012345678)
-            const maxLength = 11;
-            const slicedNumbers = onlyNumbers.slice(0, maxLength);
-
-            // 3. 추출된 숫자의 길이에 따라 하이픈 자동 삽입 (3-4-4 패턴)
-            if (slicedNumbers.length > 3 && slicedNumbers.length <= 7) {
-                // 4자리 ~ 7자리: 000-0000 패턴
-                formattedValue = `${slicedNumbers.slice(0, 3)}-${slicedNumbers.slice(3)}`;
-            } else if (slicedNumbers.length > 7) {
-                // 8자리 ~ 11자리: 000-0000-0000 패턴
-                formattedValue = `${slicedNumbers.slice(0, 3)}-${slicedNumbers.slice(3, 7)}-${slicedNumbers.slice(7)}`;
-            }
+            let formattedValue =PhoneNumberSetter(value);
 
             // 폼 데이터에 하이픈이 삽입된 값으로 설정
             setFormData({...formData,  [name] : formattedValue});
@@ -130,40 +118,13 @@ export function SignUp(){
     // 이후 입력받은 정보들을 백으로 전달 예정-현재(11.03) 미구현
     const signupOnSubmit = (e) =>{
         e.preventDefault();
-        // console.log(formData);
-        const keys = Object.keys(initialArray)
 
-        //필수 입력 항목을 key값으로, 해당 항목이 비었을 때의 출력 값을 value로 갖는 배열 생성
-        const mainKey=showIdPass?
-            {"id":"아이디","pass":"비밀번호",
-                "passcheck":"비밀번호 확인","name":"이름",
-                "age":"나이","gender":"성별",
-                "mainAddress":"도로명 주소","detailAddress":"상세 주소"}
-            :
-            {"name":"이름",
-                "age":"나이","gender":"성별",
-                "mainAddress":"도로명 주소","detailAddress":"상세 주소"};
-        let mainAlertMessage = "";
-        for (const key of keys){
-            const value = formData[key];
-            if(value===""){
-                if(Object.keys(mainKey).includes(key)){
-                    mainAlertMessage=mainAlertMessage+mainKey[key]+" 값이 비었습니다.\n";
-                }
-            }
-        }
-        //비밀번호와 비밀번호 확인란 차이 확인
-        if(showIdPass && (formData.pass !== formData.passcheck))
-        {
-            mainAlertMessage = mainAlertMessage+"\n비밀번호가 다릅니다. 확인해주세요."
-        }
-        if(!idDupl && showIdPass){//중복확인 통과시 문제없음. 안했거나 통과 못하면 경고 메시지
-            mainAlertMessage = mainAlertMessage+"\n아이디 중복확인을 해주세요."
-        }
+        let mainAlertMessage = WarningMessage(initialArray,formData,showIdPass,idDupl)
+
 
         // console.log("newEmptyCheck : ",newEmptyCheck);
         //경보 메세지가 비어있지 않을 경우(필수 입력 항목이 비었거나 비밀번호가 다른 경우) 경보 메세지 출력
-        if(mainAlertMessage!=""){
+        if(mainAlertMessage!==""){
             Swal.fire({icon: 'error', html:mainAlertMessage.replace(/\n/g,'<br/>')});
         }
         else{

@@ -11,10 +11,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -144,22 +146,57 @@ public class OauthController {
         }
     }
 
+//    @PostMapping("/info")
+//    public UserInfoDto info(@RequestBody UserInfoDto userInfoDto){
+//        UserInfoDto result = null;
+//        if(userInfoDto.isSocialDupl())
+//        {
+//            //jw토큰 받아다가 바꿔서 id에 넣기, 패스워드는 빈칸으로 세팅
+//            userInfoDto.setJwToken(userInfoDto.getUid());
+//            String JWToken = userInfoDto.getUid();//uid에 토큰 넣어옴
+//            Claims claim = oauthJWTService.getClaims(JWToken);
+//            userInfoDto.setUid(claim.getSubject());
+//        }
+//        result = oauthService.findInfo(userInfoDto);
+//        result.setUpass("");
+//        return result;
+//    }
+
+    //기존 info의 경우, localstorage에 저장된 값을 호출해서 정보를 불러옴
+    //문제는 localStorage를 변환해서 접근하면 변환한 사용자 데이터 가져왔음.
+    //그래서 J세션아이디, JWT로 접근하는 방식으로 변경함.
     @PostMapping("/info")
-    public UserInfoDto info(@RequestBody UserInfoDto userInfoDto){
-        UserInfoDto result = null;
-        if(userInfoDto.isSocialDupl())
-        {
-            //jw토큰 받아다가 바꿔서 id에 넣기, 패스워드는 빈칸으로 세팅
-            userInfoDto.setJwToken(userInfoDto.getUid());
-            String JWToken = userInfoDto.getUid();//uid에 토큰 넣어옴
-            Claims claim = oauthJWTService.getClaims(JWToken);
-            userInfoDto.setUid(claim.getSubject());
+    public UserInfoDto info() { // 인자에서 DTO를 제거하거나, 받더라도 사용하지 않습니다.
+
+        // 1. Spring Security Context에서 인증된 사용자 정보를 가져옵니다.
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUsername = null;
+
+        // 2. Principal에서 ID(Username)를 추출합니다.
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            authenticatedUsername = userDetails.getUsername(); // CustomUserDetails의 ID 필드
+        } else if (authentication != null) {
+            authenticatedUsername = authentication.getName(); // 그 외 Principal (예: 단순 String)
         }
-        result = oauthService.findInfo(userInfoDto);
+
+        // 3. 인증된 사용자 ID가 없으면 접근 거부 (혹은 예외 처리)
+        if (authenticatedUsername == null) {
+            // 이미 Security 설정을 통과했으므로 이 경우는 거의 없어야 함
+            throw new AccessDeniedException("인증된 사용자 정보를 찾을 수 없습니다.");
+        }
+
+        UserInfoDto result;
+        UserInfoDto authname = new UserInfoDto();
+        System.out.println("BBBBBBBBBBBBBBBBBBBBB");
+        System.out.println(authenticatedUsername);
+        authname.setUid(authenticatedUsername);
+        result = oauthService.findInfo(authname);
+        // 비밀번호 필드는 항상 비워둡니다.
         result.setUpass("");
         return result;
-    }
 
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserInfoDto userInfo,
@@ -339,6 +376,7 @@ public class OauthController {
         }
         return searchResult;
     }
+
     @PostMapping("/compareauthcode")
     public String compareauthcode(@RequestBody UserInfoDto userInfoDto){
         return oauthService.compareauthcode(userInfoDto);

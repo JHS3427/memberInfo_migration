@@ -29,13 +29,14 @@ export default function Login() {
                 </div>
                 <div className='loginBottomLinks'>
                     <Link href="/signUp" className='loginLinkBtn'>회원가입</Link>
-                    <Link href="/IdPwSearch"
+                    <Link href="/IdPwSearch?mode=findId"
                           className='loginLinkBtn'
-                          state={{ type: 'findId' }}>아이디 찾기</Link>
-                    <Link href="/IdPwSearch"
+                          >아이디 찾기</Link>
+                    <Link href="/IdPwSearch?mode=changePass"
                           className='loginLinkBtn'
-                          state={{ type: 'changePass'}}>비밀번호 찾기</Link>
+                          >비밀번호 찾기</Link>
                 </div>
+                <Link href="/mypage" >내정보</Link>
             </div>
         </>
     );
