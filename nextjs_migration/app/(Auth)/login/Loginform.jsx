@@ -3,7 +3,7 @@
 import Swal from 'sweetalert2';
 import {useRouter} from "next/navigation";
 import {useEffect, useRef, useState} from "react";
-import { getLogin } from "@/utils/authAPI";
+import { getLogin } from "@/utils/auth/authAPI";
 import {useAuthStore} from "@/store/authStore";
 
 export function Loginform(){

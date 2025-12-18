@@ -1,7 +1,7 @@
 "use client"
 
 import {useEffect, useState} from "react";
-import {randomString8to16} from "@/utils/authAPI";
+import {randomString8to16} from "@/utils/auth/authAPI";
 
 
 export function SocialLogin(){

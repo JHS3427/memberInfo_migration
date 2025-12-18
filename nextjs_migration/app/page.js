@@ -1,4 +1,4 @@
-import CsrfTokenInitializer from "@/components/CsrfTokenInitializer";
+import CsrfTokenInitializer from "@/components/Auth/CsrfTokenInitializer";
 import Image from "next/image";
 import Link from "next/link";
 export default async function Home() {

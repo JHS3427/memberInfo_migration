@@ -2,9 +2,9 @@
 // import { SignUp_GenderSelect } from "../SignUp/Gender/SignUp_GenderSelect"
 // import { SignUp_PostCodeBox } from "../SignUp/Postcode/SignUp_PostCodeBox"
 
-import {SignUp_InputBox} from "@/app/signUp/SignUp/InputBox/SignUp_InputBox";
-import {SignUp_GenderSelect} from "@/app/signUp/SignUp/Gender/SignUp_GenderSelect";
-import {SignUp_PostCodeBox} from "@/app/signUp/SignUp/Postcode/SignUp_PostCodeBox";
+import {SignUp_InputBox} from "@/app/(Auth)/signUp/SignUp/InputBox/SignUp_InputBox";
+import {SignUp_GenderSelect} from "@/app/(Auth)/signUp/SignUp/Gender/SignUp_GenderSelect";
+import {SignUp_PostCodeBox} from "@/app/(Auth)/signUp/SignUp/Postcode/SignUp_PostCodeBox";
 
 
 export function MyPage_InputSection({values,mainAddressVar,setMainAddressVar,dataChangeButtonOnOff,nameString,handleChange,DataChangeClose,IdDupleCheck,idChecker,DataChangeOpen,info,name}){

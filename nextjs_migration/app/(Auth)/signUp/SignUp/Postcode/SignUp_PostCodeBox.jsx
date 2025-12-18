@@ -1,5 +1,5 @@
 
-import {usePostCode} from "@/utils/authAPI";
+import {usePostCode} from "@/utils/auth/authAPI";
 
 export function SignUp_PostCodeBox({formData, setFormData}){
 

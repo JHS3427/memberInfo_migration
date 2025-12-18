@@ -1,4 +1,4 @@
-import IdPwSearch from "@/app/IdPwSearch/IdPwSearch.jsx";
+import IdPwSearch from "@/app/(Auth)/IdPwSearch/IdPwSearch.jsx";
 import './IdPwSearch.css'
 
 export default async function IdPwSearchPage({searchParams}){

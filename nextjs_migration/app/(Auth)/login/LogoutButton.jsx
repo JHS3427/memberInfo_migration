@@ -4,7 +4,7 @@ import Link from "next/link";
 import Swal from "sweetalert2";
 import {useAuthStore} from "@/store/authStore";
 import {refreshCsrfToken} from "@/utils/csrf/manageCsrfToken";
-import {getLogout} from "@/utils/authAPI";
+import {getLogout} from "@/utils/auth/authAPI";
 import {useRouter} from "next/navigation";
 
 export function LogoutButton(){
@@ -38,7 +38,7 @@ export function LogoutButton(){
             {isLogin?
                 <>
                     <h1>로그인 상태</h1>
-                    <Link href="/">홈</Link>
+                    <Link href="/public">홈</Link>
                     <button onClick={handleLogOut}>로그아웃</button>
                 </>:
                 <h1>비 로그인 상태</h1>}

@@ -9,9 +9,9 @@
  나중에 반드시 인터셉터쪽 다시 보고, 문제가 될만한게 있는지 확인해보기
  */
 
-import {Loginform} from "@/app/login/Loginform";
-import {SocialLogin} from "@/app/login/SocialLogin";
-import {LogoutButton} from "@/app/login/LogoutButton";
+import {Loginform} from "@/app/(Auth)/login/Loginform";
+import {SocialLogin} from "@/app/(Auth)/login/SocialLogin";
+import {LogoutButton} from "@/app/(Auth)/login/LogoutButton";
 import Link from "next/link";
 
 import './loginpage.css'

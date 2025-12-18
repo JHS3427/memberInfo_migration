@@ -2,14 +2,14 @@
 
 import Swal from 'sweetalert2';
 import { useEffect,useState } from "react";
-import { getInfo,idDuplCheck,updateUser,IdDrop,getLogout} from "@/utils/authAPI"
+import { getInfo,idDuplCheck,updateUser,IdDrop,getLogout} from "@/utils/auth/authAPI"
 import { useRouter} from "next/navigation";
 import {useAuthStore} from "@/store/authStore";
 
-import { MyPage_SideBar } from '@/app/mypage/MyPage/MyPage_SideBar'
-import { MyPage_InputSection } from '@/app/mypage/MyPage/MyPage_InputSection';
+import { MyPage_SideBar } from '@/app/(Auth)/mypage/MyPage/MyPage_SideBar'
+import { MyPage_InputSection } from '@/app/(Auth)/mypage/MyPage/MyPage_InputSection';
 import {refreshCsrfToken} from "@/utils/csrf/manageCsrfToken";
-import {PhoneNumberSetter} from "@/components/PhoneNumberSetter";
+import {PhoneNumberSetter} from "@/components/Auth/PhoneNumberSetter";
 
 export function MyInfopage(){
 

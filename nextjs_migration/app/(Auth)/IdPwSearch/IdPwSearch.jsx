@@ -2,11 +2,11 @@
 
 import Swal from 'sweetalert2';
 import { useEffect, useState } from "react";
-import { SearchingUserInfo , sendingAuthCode, updateUser} from "@/utils/authAPI.js"
-import {IdPwSearch_selectTab} from "@/app/IdPwSearch/IdPwSearchPart/IdPwSearch_selectTab";
-import {IdPwSearch_findId} from "@/app/IdPwSearch/IdPwSearchPart/IdPwSearch_findId";
-import {IdPwSearch_AuthcodeInput} from "@/app/IdPwSearch/IdPwSearchPart/IdPwSearch_AuthcodeInput";
-import {IdPwSearch_passChange} from "@/app/IdPwSearch/IdPwSearchPart/IdPwSearch_passChange";
+import { SearchingUserInfo , sendingAuthCode, updateUser} from "@/utils/auth/authAPI.js"
+import {IdPwSearch_selectTab} from "@/app/(Auth)/IdPwSearch/IdPwSearchPart/IdPwSearch_selectTab";
+import {IdPwSearch_findId} from "@/app/(Auth)/IdPwSearch/IdPwSearchPart/IdPwSearch_findId";
+import {IdPwSearch_AuthcodeInput} from "@/app/(Auth)/IdPwSearch/IdPwSearchPart/IdPwSearch_AuthcodeInput";
+import {IdPwSearch_passChange} from "@/app/(Auth)/IdPwSearch/IdPwSearchPart/IdPwSearch_passChange";
 
 import {useRouter} from "next/navigation";
 

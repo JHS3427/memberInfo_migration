@@ -1,18 +1,18 @@
 "use client"
 
 import Swal from 'sweetalert2';
-import {idDuplCheck, randomString8to16, sendSignUpData, usePostCode} from "@/utils/authAPI";
+import {idDuplCheck, randomString8to16, sendSignUpData, usePostCode} from "@/utils/auth/authAPI";
 import React, {useState,useMemo} from 'react'
 import {useRouter} from "next/navigation";
 
-import {SignUp_InputBox} from "@/app/signUp/SignUp/InputBox/SignUp_InputBox";
-import {SignUp_Label} from "@/app/signUp/SignUp/InputBox/SignUp_Lable";
-import {SignUp_GenderSelect} from "@/app/signUp/SignUp/Gender/SignUp_GenderSelect";
-import {SignUp_PostCodeBox} from "@/app/signUp/SignUp/Postcode/SignUp_PostCodeBox";
-import {SignUp_EmailSection} from "@/app/signUp/SignUp/Email/SignUp_EmailSection";
+import {SignUp_InputBox} from "@/app/(Auth)/signUp/SignUp/InputBox/SignUp_InputBox";
+import {SignUp_Label} from "@/app/(Auth)/signUp/SignUp/InputBox/SignUp_Lable";
+import {SignUp_GenderSelect} from "@/app/(Auth)/signUp/SignUp/Gender/SignUp_GenderSelect";
+import {SignUp_PostCodeBox} from "@/app/(Auth)/signUp/SignUp/Postcode/SignUp_PostCodeBox";
+import {SignUp_EmailSection} from "@/app/(Auth)/signUp/SignUp/Email/SignUp_EmailSection";
 
-import {PhoneNumberSetter} from "@/components/PhoneNumberSetter";
-import {WarningMessage} from "@/app/signUp/WarningMessage";
+import {PhoneNumberSetter} from "@/components/Auth/PhoneNumberSetter";
+import {WarningMessage} from "@/app/(Auth)/signUp/WarningMessage";
 
 export function SignUp(){
 

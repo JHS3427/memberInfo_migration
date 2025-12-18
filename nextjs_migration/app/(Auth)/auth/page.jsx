@@ -1,4 +1,4 @@
-import {SocialAuth} from "@/app/auth/SocialAuth";
+import {SocialAuth} from "@/app/(Auth)/auth/SocialAuth";
 
 export default function Auth(){
 

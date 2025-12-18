@@ -1,4 +1,4 @@
-import {MyInfopage} from "@/app/mypage/MyInfopage";
+import {MyInfopage} from "@/app/(Auth)/mypage/MyInfopage";
 
 import './mypage2.css'
 
