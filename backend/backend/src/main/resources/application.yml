@@ -8,7 +8,7 @@ server:
 kakaopay:
   pay:
 
-    
+
     host: "https://kapi.kakao.com"
     admin-key: "611a2356678d16e731039b0a169d0380"
     cid: "TC0ONETIME"
